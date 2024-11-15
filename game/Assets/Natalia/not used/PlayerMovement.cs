@@ -5,15 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
-    float movementVelocity = 1;
-    [SerializeField]
-    float jumpVelocity = 10;
+    [SerializeField] float movementVelocity = 1;
+    [SerializeField] float jumpVelocity = 10;
 
-    float maxSpeed = 10.0f;
-    float minSpeed = -10.0f;
+    float maxSpeed = 10.0f; float minSpeed = -10.0f;
     int jumpCounter = 0;
-    int maxJumpCount = 2;
+    int maxJumpCount = 1; // do przemyslenia czy chcemy double jump, jesli tak to zmienic na 2
     bool jump = false;
 
     private void Update()
@@ -24,13 +21,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        Vector3 heightPosition = GetComponent<Rigidbody>().position;
+        Vector3 heightPosition = GetComponentInParent<Rigidbody>().position;
         if (heightPosition[1] >= -10.0f)
         {
-            Vector3 currentVelocity = GetComponent<Rigidbody>().velocity;
+            Vector3 currentVelocity = GetComponentInParent<Rigidbody>().velocity;
             if (Input.GetKey(KeyCode.W))
             {
                 currentVelocity += new Vector3(0.0f, 0.0f, movementVelocity);
@@ -69,11 +65,11 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
             //Debug.Log(currentVelocity);
-            GetComponent<Rigidbody>().velocity = currentVelocity;
+            GetComponentInParent<Rigidbody>().velocity = currentVelocity;
         }
         else
         {
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene("TestScene");
         }        
     }
 
@@ -81,12 +77,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.collider.tag == "Floor")
         {
-            jumpCounter = 0;
+            jumpCounter = 0; // Counter zeruje sie przy dotknieciu ziemi, umozliwia ponowny skok az do osiagniecia maxJumpCount
             //Debug.Log(jumpCounter);
         }
         if (collision.collider.tag == "Enemy")
         {
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene("TestScene"); // restart poziomu przy dotknieciu przeciwnika
         }
     }
 }
