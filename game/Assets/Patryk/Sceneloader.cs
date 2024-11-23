@@ -11,7 +11,16 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene(sceneIndex);
     }
+    public void Exit()
+    {
+      
+        
+            Debug.Log("Exiting game..."); // Do debugowania w edytorze
+            Application.Quit();
+        
+    }
 }
+
 /* ladowanie scen z loading screenem
 public class SceneLoader : MonoBehaviour
 {

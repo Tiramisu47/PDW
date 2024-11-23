@@ -6,6 +6,7 @@ public class menuLogic : MonoBehaviour
 {
     [SerializeField] private GameObject m1;
     [SerializeField] private GameObject m2;
+    [SerializeField] private GameObject m3;
     [SerializeField] private GameObject s1;
     [SerializeField] private GameObject s2;
     [SerializeField] private GameObject s3;
@@ -13,10 +14,23 @@ public class menuLogic : MonoBehaviour
     {
         m1.SetActive(true);
         m2.SetActive(false);
+        m3.SetActive(false);
         s1.SetActive(false);
         s2.SetActive(false);
         s3.SetActive(false);
 
+    }
+    public void Credits()
+    {
+        m3.SetActive(true);
+        m2.SetActive(false);
+        m1.SetActive(false);
+    }
+    public void CreditsBack()
+    {
+        m1.SetActive(true);
+        m2.SetActive(false);
+        m3.SetActive(false);
     }
     public void SettingsSelect()
     {
