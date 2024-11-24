@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WebHandler_Core : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class WebHandler_Core : MonoBehaviour
     void source_joinSessionS(string message)
     {
         CORE_source_joinSessionS source_joinRoomS_message = JsonUtility.FromJson<CORE_source_joinSessionS>(message);
-        Debug.Log(source_joinRoomS_message.sessionToken);
+        Debug.Log("!login " + source_joinRoomS_message.sessionToken);
     }
 
     void other_toggleElementStateS(string message)
@@ -93,4 +94,15 @@ public class WebHandler_Core : MonoBehaviour
         WebHandler.Instance.Send(json);
     }
 
+    public void G_trySyncElementsList_S()
+    {
+        var CORE_G_trySyncElementsList_S_json = new CORE_G_trySyncElementsList_S
+        {
+            eventType = "G_trySyncElementsList_S",
+            channelType = "core",
+        };
+
+        string json = JsonUtility.ToJson(CORE_G_trySyncElementsList_S_json);
+        WebHandler.Instance.Send(json);
+    }
 }

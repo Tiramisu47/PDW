@@ -30,9 +30,8 @@ export const CoreService = {
     return generatedSessionToken;
   },
 
-  ValidateSession(sessionToken: string): Session {
+  ValidateSession(sessionToken: string): Session | null {
     const session = this.sessions[sessionToken];
-    if (!session) throw new Error();
     return session;
   },
 };

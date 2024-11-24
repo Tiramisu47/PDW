@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konsola</title>
+    <style>
+      body {
+        font-family: monospace;
+        background-color: #121212;
+        color: #fff;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .console {
+        display: flex;
+        flex-direction: column;
+        width: min(100%, 600px);
+        max-width: 600px;
+        padding: 16px;
+      }
+
+      #output {
+        height: 200px;
+        overflow-y: auto;
+        border-left: 3px solid #333;
+        padding: 0.5rem;
+        background-color: #121212;
+        color: #0f0;
+        margin-bottom: 0.5rem;
+        border-radius: 3px;
+      }
+
+      #commandInput {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #333;
+        background-color: #121212;
+        color: #fff;
+        outline: none;
+      }
+
+      /* COLORS */
+      .color-red {
+        color: red;
+      }
+
+      .color-default {
+        color: rgb(200, 200, 200);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="console">
+      <div id="output"></div>
+      <input
+        type="text"
+        id="commandInput"
+        placeholder="Type !help for more information"
+      />
+    </div>
+    <script>
+      const commandInput = document.getElementById("commandInput");
+      const output = document.getElementById("output");
+      let _sessionToken = "";
+      let socket = null;
+      let livePreviewElement = null;
+
+      commandInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          const command = commandInput.value.trim();
+          if (command) {
+            finalizeLivePreview();
+            processCommand(command);
+            commandInput.value = "";
+            output.scrollTop = output.scrollHeight;
+          }
+        }
+      });
+
+      function updateLivePreview(inputText) {
+        const prefix = _sessionToken ? `@${_sessionToken} > ` : `@root > `;
+        if (!livePreviewElement) {
+          livePreviewElement = document.createElement("div");
+          livePreviewElement.className = "color-default";
+          output.appendChild(livePreviewElement);
+        }
+        livePreviewElement.textContent = `${prefix}${inputText}`;
+      }
+
+      function finalizeLivePreview() {
+        if (livePreviewElement) {
+          livePreviewElement = null;
+        }
+      }
+
+      function processCommand(command) {
+        const args = command.split(" ");
+        const mainCommand = args[0];
+
+        switch (mainCommand) {
+          case "!login":
+            handleLogin(args);
+            break;
+          case "!toggle":
+            handleToggle(args);
+            break;
+          case "!help":
+            handleHelp();
+            break;
+          case "!clear":
+            handleClear();
+            break;
+          default:
+            printLine(`Unknown command: ${command}`, "red");
+            break;
+        }
+
+        updateLivePreview("");
+      }
+
+      function handleLogin(args) {
+        if (args.length !== 2) {
+          printLine(`Usage: !login [username]`, "red");
+          return;
+        }
+
+        _sessionToken = args[1];
+        W_tryLoginSession_S(_sessionToken);
+      }
+
+      function handleToggle(args) {
+        if (args.length !== 2) {
+          printLine("Usage: !toggle [UID]", "red");
+          return;
+        }
+
+        const uid = args[1];
+        W_tryToggleElementState_S(uid);
+      }
+
+      function handleClear() {
+        output.innerHTML = "";
+        livePreviewElement = null;
+      }
+
+      function handleHelp() {
+        printLine("!toggle [UID]");
+        printLine("!login [username]");
+        printLine("!clear");
+        printLine("!help");
+      }
+
+      function tryToConnect() {
+        printLine(`Connecting to the server...`);
+        socket = new WebSocket("ws://localhost:80");
+        socket.addEventListener("open", () => {
+          printLine(`Connected to server successfully`, "green");
+          updateLivePreview("");
+          commandInput.disabled = false;
+          commandInput.addEventListener("input", () => {
+            updateLivePreview(commandInput.value);
+          });
+        });
+
+        socket.addEventListener("message", (event) => {
+          handleIncomingMessage(event.data);
+        });
+
+        socket.addEventListener("error", () => {
+          printLine(`Error connecting to server`, "red");
+        });
+
+        socket.addEventListener("close", () => {
+          printLine(`Disconnected from server`, "red");
+        });
+      }
+
+      function handleIncomingMessage(message) {
+        try {
+          const parsedMessage = JSON.parse(message);
+          switch (parsedMessage.eventType) {
+            case "source_loginSessionSuccesfulS":
+              _sessionToken = parsedMessage.sessionToken;
+              printLine(`Successfully logged in as @${_sessionToken}`, "green");
+              break;
+            case "source_loginSessionFailedS":
+              printLine("Error when connecting to session", "red");
+              break;
+          }
+        } catch (e) {
+          // Handle error
+        }
+      }
+
+      function W_tryLoginSession_S(sessionToken) {
+        const message = {
+          channelType: "core",
+          eventType: "W_tryLoginSession_S",
+          sessionToken: sessionToken,
+        };
+        sendJSON(message);
+      }
+
+      function W_tryToggleElementState_S(uid) {
+        const message = {
+          channelType: "core",
+          eventType: "W_tryToggleElementState_S",
+          sessionToken: _sessionToken,
+          elementUid: uid,
+        };
+        sendJSON(message);
+      }
+
+      function sendJSON(jsonObject) {
+        if (socket.readyState === WebSocket.OPEN) {
+          const jsonString = JSON.stringify(jsonObject);
+          socket.send(jsonString);
+          console.log("JSON sent:", jsonString);
+        } else {
+          console.log("WebSocket connection is not open");
+        }
+      }
+
+      function printLine(text, color = "default") {
+        const line = document.createElement("div");
+        line.className = `color-${color}`;
+        line.textContent = text;
+        output.appendChild(line);
+      }
+
+      tryToConnect();
+      commandInput.disabled = true;
+    </script>
+  </body>
+</html>
