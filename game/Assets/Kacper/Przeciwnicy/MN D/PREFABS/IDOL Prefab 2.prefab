@@ -1395,7 +1395,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewAngle: 90
   detectionRange: 90
-  moveSpeed: 25
+  moveSpeed: 20
 --- !u!195 &5021388013867931182
 NavMeshAgent:
   m_ObjectHideFlags: 0
