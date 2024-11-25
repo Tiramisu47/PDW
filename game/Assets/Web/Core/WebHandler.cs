@@ -40,25 +40,22 @@ public class WebHandler : MonoBehaviour
 
     private void OnConnected()
     {
-        Debug.Log("Polaczone");
-        //NotificationBox.Instance.Display("Połączono z serwerem gry.", NotificationType.Info);
+        Debug.Log("Połączono z serwerem gry.");
         successfullyConnected = true;
-
         WebHandler_Core.Instance.try_createSession();
     }
 
     void Timeout()
     {
         if (successfullyConnected) return;
-
-        Debug.Log("Blad polaczenia");
+        Debug.Log("Błąd połączenia z serwerem gry.");
         ws.Close();
     }
 
     void OnMessage(byte[] bytes)
     {
         string message = System.Text.Encoding.UTF8.GetString(bytes);
-        Debug.Log(message);
+        Debug.Log("WEB > INPUT > " + message);
         InputMessage inputMessage = JsonUtility.FromJson<InputMessage>(message);
         switch (inputMessage.channelType)
         {

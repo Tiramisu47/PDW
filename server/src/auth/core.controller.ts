@@ -5,12 +5,9 @@ import { User } from "./entity/user.entity";
 export const CoreController = {
   handle(data: any, client: any): void {
     switch (data.eventType) {
+      //FROM GAME
       case "try_createSession":
         this.createSession(client);
-        break;
-
-      case "try_rangeElementState":
-        this.rangeElementState(data.sessionToken, data.elementUid, data.value);
         break;
 
       //FROM SITE
@@ -19,6 +16,9 @@ export const CoreController = {
         break;
       case "W_tryToggleElementState_S":
         this.toggleElementState(data.sessionToken, data.elementUid);
+        break;
+      case "W_tryRangeElementState_S":
+        this.rangeElementState(data.sessionToken, data.elementUid, data.value);
         break;
       default:
         break;

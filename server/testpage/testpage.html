@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konsola</title>
+    <style>
+      body {
+        font-family: monospace;
+        background-color: #121212;
+        color: #fff;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .console {
+        display: flex;
+        flex-direction: column;
+        width: min(100%, 600px);
+        max-width: 600px;
+        padding: 16px;
+      }
+
+      #output {
+        height: 200px;
+        overflow-y: auto;
+        border-left: 3px solid #333;
+        padding: 0.5rem;
+        background-color: #121212;
+        color: rgb(200, 200, 200);
+        margin-bottom: 0.5rem;
+        border-radius: 3px;
+      }
+
+      #commandInput {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #333;
+        background-color: #121212;
+        color: #fff;
+        outline: none;
+      }
+
+      /* COLORS */
+      .color-red {
+        color: red;
+      }
+
+      .color-default {
+        color: rgb(200, 200, 200);
+      }
+
+      .color-green {
+        color: rgb(0, 255, 0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="console">
+      <div id="output"></div>
+      <input
+        type="text"
+        id="commandInput"
+        placeholder="Type !help for more information"
+      />
+    </div>
+    <script src="./main.js"></script>
+  </body>
+</html>
