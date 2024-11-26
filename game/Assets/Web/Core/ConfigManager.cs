@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class ConfigManager : MonoBehaviour
 {
-    public readonly bool useProdServer = false;
-    public readonly string prodServer = "ws://0.0.0.0:80";
+    public readonly bool useProdServer = true;
+    public readonly string prodServer = "ws://51.83.180.196:81";
     public readonly string localServer = "ws://localhost:80";
     public readonly int connectionTimeoutSeconds = 3;
 

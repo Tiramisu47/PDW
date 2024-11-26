@@ -86,7 +86,7 @@ public class WebHandler_Core : MonoBehaviour
     {
         var CORE_try_leaveRoom_json = new CORE_try_createSession
         {
-            eventType = "try_createSession",
+            eventType = "GS_tryCreateSession",
             channelType = "core",
         };
 
