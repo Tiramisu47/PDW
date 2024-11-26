@@ -1,0 +1,49 @@
+body {
+  font-family: monospace;
+  background-color: #121212;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.console {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 600px);
+  padding: 16px;
+}
+
+#output {
+  height: 200px;
+  overflow-y: auto;
+  border-left: 3px solid #333;
+  border-top: 3px solid #333;
+  border-right: 3px solid #333;
+  padding: 0.5rem;
+  background-color: #121212;
+  color: rgb(200, 200, 200);
+}
+
+#commandInput {
+  flex: 1;
+  padding: 8px;
+  border: 3px solid #333;
+  background-color: #121212;
+  color: #fff;
+  outline: none;
+}
+
+/* COLORS */
+.color-red {
+  color: red;
+}
+
+.color-default {
+  color: rgb(200, 200, 200);
+}
+
+.color-green {
+  color: rgb(0, 255, 0);
+}
