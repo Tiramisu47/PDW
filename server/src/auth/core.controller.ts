@@ -5,20 +5,24 @@ import { User } from "./entity/user.entity";
 export const CoreController = {
   handle(data: any, client: any): void {
     switch (data.eventType) {
-      //FROM GAME
-      case "try_createSession":
-        this.createSession(client);
+      //GAME -> SERVER
+      case "GS_tryCreateSession":
+        this.GS_tryCreateSession(client);
         break;
 
-      //FROM SITE
-      case "W_tryLoginSession_S":
-        this.loginSession(client, data.sessionToken);
+      //WEB -> SERVER
+      case "WS_tryLoginSession":
+        this.WS_tryLoginSession(client, data.sessionToken);
         break;
-      case "W_tryToggleElementState_S":
-        this.toggleElementState(data.sessionToken, data.elementUid);
+      case "WS_tryToggleElementState":
+        this.WS_tryToggleElementState(data.sessionToken, data.elementUid);
         break;
-      case "W_tryRangeElementState_S":
-        this.rangeElementState(data.sessionToken, data.elementUid, data.value);
+      case "WS_tryRangeElementState":
+        this.WS_tryRangeElementState(
+          data.sessionToken,
+          data.elementUid,
+          data.value
+        );
         break;
       default:
         break;
@@ -26,7 +30,7 @@ export const CoreController = {
   },
 
   ///HANDLE FUNCTIONS
-  async createSession(client: WebSocket): Promise<boolean> {
+  async GS_tryCreateSession(client: WebSocket): Promise<boolean> {
     const newSessionToken = CoreService.CreateSession(client);
     const source_joinSessionS_message = JSON.stringify({
       channelType: "core",
@@ -37,7 +41,7 @@ export const CoreController = {
     return true;
   },
 
-  async loginSession(
+  async WS_tryLoginSession(
     client: WebSocket,
     sessionToken: string
   ): Promise<boolean> {
@@ -62,7 +66,7 @@ export const CoreController = {
     return true;
   },
 
-  async toggleElementState(
+  async WS_tryToggleElementState(
     sessionToken: string,
     elementUid: number
   ): Promise<boolean> {
@@ -77,7 +81,7 @@ export const CoreController = {
     return true;
   },
 
-  async rangeElementState(
+  async WS_tryRangeElementState(
     sessionToken: string,
     elementUid: number,
     value: number

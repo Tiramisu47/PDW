@@ -1,7 +1,7 @@
 import WebSocket, { Server } from "ws";
 
 import { CoreController } from "./auth/core.controller";
-const wss = new Server({ port: 80 });
+const wss = new Server({ port: 81 });
 
 wss.on("connection", (ws: WebSocket) => {
   ws.on("message", (message: WebSocket.MessageEvent) => {
@@ -20,4 +20,4 @@ wss.on("connection", (ws: WebSocket) => {
   });
 });
 
-console.log("WebSocket server is running on ws://localhost:80");
+console.log("WebSocket server is running on ws://51.83.180.196:81");
