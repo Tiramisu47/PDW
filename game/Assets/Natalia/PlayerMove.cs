@@ -72,9 +72,9 @@ public class PlayerMove : MonoBehaviour
 
         // handle drag
         if (grounded)
-            rb.linearDamping = groundDrag;
+            rb.drag = groundDrag;
         else
-            rb.linearDamping = 0;
+            rb.drag = 0;
         
     }
     private void FixedUpdate()
@@ -84,20 +84,20 @@ public class PlayerMove : MonoBehaviour
 
     private void SpeedControl() // by postac nie przyspieszala poza wyznaczona predkosc
     {
-        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         // ograniczenie velocity
         if(flatVelocity.magnitude > moveSpeed)
         {
             Vector3 limitedVelocity = flatVelocity.normalized * moveSpeed;
-            rb.linearVelocity = new Vector3(limitedVelocity.x, rb.linearVelocity.y, limitedVelocity.z);
+            rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
         }
     }
 
     private void Jump()
     {
         // reset y velocity
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
     private void ResetJump()
