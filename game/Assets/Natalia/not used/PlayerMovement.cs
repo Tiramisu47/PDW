@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 heightPosition = GetComponentInParent<Rigidbody>().position;
         if (heightPosition[1] >= -10.0f)
         {
-            Vector3 currentVelocity = GetComponentInParent<Rigidbody>().linearVelocity;
+            Vector3 currentVelocity = GetComponentInParent<Rigidbody>().velocity;
             if (Input.GetKey(KeyCode.W))
             {
                 currentVelocity += new Vector3(0.0f, 0.0f, movementVelocity);
@@ -65,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
             //Debug.Log(currentVelocity);
-            GetComponentInParent<Rigidbody>().linearVelocity = currentVelocity;
+            GetComponentInParent<Rigidbody>().velocity = currentVelocity;
         }
         else
         {
