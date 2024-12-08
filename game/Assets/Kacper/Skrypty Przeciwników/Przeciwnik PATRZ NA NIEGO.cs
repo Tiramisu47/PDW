@@ -3,13 +3,16 @@ using UnityEngine.AI;
 
 public class SneakyStalker : MonoBehaviour
 {
-    public float viewAngle = 90f;        // K¹t widzenia gracza
-    public float detectionRange = 10f;   // Maksymalna odleg³oœæ wykrycia przeciwnika
-    public float moveSpeed = 3.5f;      // Prêdkoœæ poruszania siê przeciwnika
+    public float viewAngle = 90f;            // K¹t widzenia gracza
+    public float detectionRange = 10f;       // Maksymalna odleg³oœæ wykrycia gracza
+    public float moveSpeed = 3.5f;           // Prêdkoœæ poruszania siê przeciwnika
+    public float attackRange = 2f;           // Zasiêg ataku
+    public float attackCooldown = 2f;       // Czas miêdzy atakami
 
-    private Transform player;            // Transform gracza
-    private Transform playerCamera;      // Transform kamery gracza
-    private NavMeshAgent agent;          // Agent do poruszania przeciwnikiem
+    private Transform player;                // Transform gracza
+    private Transform playerCamera;          // Transform kamery gracza
+    private NavMeshAgent agent;              // Agent do poruszania przeciwnikiem
+    private float lastAttackTime = 0f;       // Czas ostatniego ataku
 
     void Start()
     {
@@ -55,6 +58,13 @@ public class SneakyStalker : MonoBehaviour
                 if (angle > viewAngle / 2f)  // Gracz nie patrzy na przeciwnika
                 {
                     agent.SetDestination(player.position);  // Przeciwnik pod¹¿a za graczem
+
+                    // **Atakowanie gracza**
+                    if (distanceToPlayer <= attackRange && Time.time > lastAttackTime + attackCooldown)
+                    {
+                        AttackPlayer();
+                        lastAttackTime = Time.time; // Aktualizacja czasu ostatniego ataku
+                    }
                 }
                 else
                 {
@@ -65,6 +75,16 @@ public class SneakyStalker : MonoBehaviour
             {
                 agent.ResetPath();  // Zatrzymaj przeciwnika, jeœli jest poza zasiêgiem
             }
+        }
+    }
+
+    private void AttackPlayer()
+    {
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(1); // Zadaj 1 punkt obra¿eñ graczowi
+            Debug.Log("Przeciwnik atakuje gracza!");
         }
     }
 
