@@ -12,30 +12,19 @@ public class SneakyStalker : MonoBehaviour
     private Transform player;                // Transform gracza
     private Transform playerCamera;          // Transform kamery gracza
     private NavMeshAgent agent;              // Agent do poruszania przeciwnikiem
+    private Animator animator;               // Animator przeciwnika
     private float lastAttackTime = 0f;       // Czas ostatniego ataku
 
     void Start()
     {
-        // Znajdowanie gracza automatycznie w scenie
         player = GameObject.FindWithTag("Player").transform;
-
-        // Znajdowanie g³ównej kamery w scenie
         playerCamera = Camera.main.transform;
-
-        // Pobranie komponentu NavMeshAgent
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
 
-        // Sprawdzenie, czy znaleziono gracza i kamerê
-        if (player == null)
-        {
-            Debug.LogError("Nie znaleziono gracza w scenie!");
-        }
-        if (playerCamera == null)
-        {
-            Debug.LogError("Nie znaleziono kamery w scenie!");
-        }
+        if (player == null) Debug.LogError("Nie znaleziono gracza w scenie!");
+        if (playerCamera == null) Debug.LogError("Nie znaleziono kamery w scenie!");
 
-        // Ustawienie prêdkoœci poruszania siê na wartoœæ moveSpeed
         agent.speed = moveSpeed;
     }
 
@@ -46,55 +35,59 @@ public class SneakyStalker : MonoBehaviour
             Vector3 directionToPlayer = player.position - transform.position;
             float distanceToPlayer = directionToPlayer.magnitude;
 
-            // Sprawdzenie, czy przeciwnik znajduje siê w zasiêgu wykrycia
             if (distanceToPlayer <= detectionRange)
             {
-                // Normalizowanie kierunku do gracza
                 directionToPlayer.Normalize();
-
-                // Sprawdzamy, czy gracz patrzy w kierunku przeciwnika
                 float angle = Vector3.Angle(playerCamera.forward, -directionToPlayer);
 
-                if (angle > viewAngle / 2f)  // Gracz nie patrzy na przeciwnika
+                if (angle > viewAngle / 2f)
                 {
-                    agent.SetDestination(player.position);  // Przeciwnik pod¹¿a za graczem
+                    agent.SetDestination(player.position);
+                    animator.SetBool("IsRunning", true); // Biegnie za graczem
 
-                    // **Atakowanie gracza**
                     if (distanceToPlayer <= attackRange && Time.time > lastAttackTime + attackCooldown)
                     {
                         AttackPlayer();
-                        lastAttackTime = Time.time; // Aktualizacja czasu ostatniego ataku
+                        lastAttackTime = Time.time;
                     }
                 }
                 else
                 {
-                    agent.ResetPath();  // Przeciwnik zatrzymuje siê, gdy gracz patrzy
+                    agent.ResetPath();
+                    animator.SetBool("IsRunning", false); // Przestaje biec
                 }
             }
             else
             {
-                agent.ResetPath();  // Zatrzymaj przeciwnika, jeœli jest poza zasiêgiem
+                agent.ResetPath();
+                animator.SetBool("IsRunning", false); // Przestaje biec
             }
         }
     }
 
     private void AttackPlayer()
     {
+        agent.ResetPath();
+        animator.SetBool("IsAttacking", true); // Uruchom animacjê ataku
+        Invoke("EndAttack", 0.5f); // Zakoñcz animacjê ataku po 0.5 sekundy (czas trwania ataku)
+
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(1); // Zadaj 1 punkt obra¿eñ graczowi
-            Debug.Log("Przeciwnik atakuje gracza!");
         }
+    }
+
+    private void EndAttack()
+    {
+        animator.SetBool("IsAttacking", false); // Zakoñcz animacjê ataku
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Rysowanie zasiêgu detekcji w edytorze
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Rysowanie k¹ta widzenia
         Vector3 forward = transform.forward;
         Quaternion leftRayRotation = Quaternion.AngleAxis(-viewAngle / 2f, Vector3.up);
         Quaternion rightRayRotation = Quaternion.AngleAxis(viewAngle / 2f, Vector3.up);
