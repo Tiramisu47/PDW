@@ -9,7 +9,7 @@ public class menuLogic : MonoBehaviour
     [SerializeField] private GameObject m3;
     [SerializeField] private GameObject s1;
     [SerializeField] private GameObject s2;
-    [SerializeField] private GameObject s3;
+    
     private void Start()
     {
         m1.SetActive(true);
@@ -17,7 +17,7 @@ public class menuLogic : MonoBehaviour
         m3.SetActive(false);
         s1.SetActive(false);
         s2.SetActive(false);
-        s3.SetActive(false);
+        
 
     }
     public void Credits()
@@ -38,7 +38,7 @@ public class menuLogic : MonoBehaviour
         m2.SetActive(true);
         s1.SetActive(true);
         s2.SetActive(false);
-        s3.SetActive(false);
+        
     }
     public void BackSelect()
     {
@@ -48,20 +48,15 @@ public class menuLogic : MonoBehaviour
     public void DisplaySelect()
     {
         s2.SetActive(true);
-        s3.SetActive(false);
+       
         s1.SetActive(false);
     }
     public void GraphicsSelect()
     {
         s1.SetActive(true);
         s2.SetActive(false);
-        s3.SetActive(false);
+       
     }
-    public void ControlSelect()
-    {
-        s3.SetActive(true);
-        s1.SetActive(false);
-        s2.SetActive(false);
-    }
+ 
 
 }
