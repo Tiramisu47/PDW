@@ -192,21 +192,27 @@ public class ItemPickUpManager : MonoBehaviour
         transform.SetParent(null);
         SetVisibility(true);
 
+        // Ustaw pozycjê przedmiotu w pobli¿u gracza/kamery, nad ziemi¹
+        transform.position = player.position + new Vector3(0, 1f, 0); // 1 jednostka nad graczem
+
         rb.isKinematic = false;
         coll.isTrigger = false;
 
         BoxCollider boxCollider = coll.GetComponent<BoxCollider>();
         boxCollider.enabled = true;
 
-        // Poprawione linie: Ustawienie prêdkoœci na zero
+        // Zerowanie prêdkoœci
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
+        // Dodanie si³y rzutu
         rb.AddForce(mainCamera.forward * dropForwardForce + mainCamera.up * dropUpwardForce, ForceMode.Impulse);
 
+        // Dodanie losowego momentu obrotowego
         float random = Random.Range(-1f, 1f);
         rb.AddTorque(new Vector3(random, random, random) * 10, ForceMode.Impulse);
     }
+
 
     private void UpdateVisibility()
     {
