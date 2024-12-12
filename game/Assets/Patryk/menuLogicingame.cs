@@ -23,7 +23,17 @@ public class menuLogicIngame : MonoBehaviour
         F1.SetActive(false);
 
     }
-   
+    public void StartSelect()
+    {
+        m1.SetActive(true);
+        m2.SetActive(false);
+
+        s1.SetActive(false);
+        s2.SetActive(false);
+        s3.SetActive(false);
+        F1.SetActive(false);
+
+    }
     public void SettingsSelect()
     {
         m1.SetActive(false);
