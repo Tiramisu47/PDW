@@ -2,21 +2,34 @@ using UnityEngine;
 
 public class PlaneTrigger : MonoBehaviour
 {
-    public DoorInteraction door; // Przypisz obiekt drzwi w inspectorze
-    private int requiredCubes = 3;
-    private int placedCubes = 0;
+    public DoorInteraction door; // Odniesienie do skryptu DoorInteraction
+    public GameObject plane1; // Pierwszy Plane
+    public GameObject plane2; // Drugi Plane
+
+    public bool puzzleSolved;
+    private bool plane1Activated = false;
+    private bool plane2Activated = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Cube"))
+        if (other.CompareTag("Player"))
         {
-            placedCubes++;
-            Debug.Log("Umieszczono cube: " + placedCubes + "/" + requiredCubes);
-
-            if (placedCubes >= requiredCubes)
+            if (gameObject == plane1)
             {
-                door.UnlockDoor();
+                plane1Activated = true;
+                Debug.Log("Plane 1 aktywowany.");
             }
+            else if (gameObject == plane2)
+            {
+                plane2Activated = true;
+                Debug.Log("Plane 2 aktywowany.");
+            }
+        }
+        // Sprawdzenie, czy oba Plane zosta³y aktywowane
+        if (plane1Activated && plane2Activated)
+        {
+            puzzleSolved = true;
+            Debug.LogWarning("Oba Plane aktywowane. Drzwi odblokowane!");
         }
     }
 }
