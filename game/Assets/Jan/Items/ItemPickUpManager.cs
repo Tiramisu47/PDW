@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemPickUpManager : MonoBehaviour
@@ -7,7 +8,6 @@ public class ItemPickUpManager : MonoBehaviour
     public Transform player, mainCamera, ItemContainer;
 
     public float pickUpRange;
-    public float dropForwardForce, dropUpwardForce;
 
     public bool equipped;
     public bool onFloor = true;
@@ -21,6 +21,7 @@ public class ItemPickUpManager : MonoBehaviour
 
     private Vector3 localOffset = Vector3.zero;
     private Quaternion localRotation = Quaternion.identity;
+    private Stack<int> collectedItems = new Stack<int>(); // Stos przechowuj¹cy numery slotów
 
     private void Start()
     {
@@ -146,6 +147,10 @@ public class ItemPickUpManager : MonoBehaviour
         BoxCollider boxCollider = coll.GetComponent<BoxCollider>();
         boxCollider.enabled = false;
 
+        if (pickedUp1) collectedItems.Push(1);
+        else if (pickedUp2) collectedItems.Push(2);
+        else if (pickedUp3) collectedItems.Push(3);
+
         UpdateVisibility();
     }
 
@@ -170,30 +175,35 @@ public class ItemPickUpManager : MonoBehaviour
 
     private void Drop()
     {
-        equipped = false;
-        onFloor = true;
+        if (collectedItems.Count == 0)
+        {
+            Debug.LogWarning("Brak przedmiotów do wyrzucenia!");
+            return; // Jeœli stos jest pusty, nic nie rób
+        }
+        int slotToDrop = collectedItems.Pop(); // Pobierz ostatnio zebran¹ wartoœæ
 
-        if (pickedUp1)
+        // Aktualizuj flagi dla odpowiedniego slotu
+        if (slotToDrop == 1)
         {
             pickedUp1 = false;
             slotFull1 = false;
         }
-        else if (pickedUp2)
+        else if (slotToDrop == 2)
         {
             pickedUp2 = false;
             slotFull2 = false;
         }
-        else if (pickedUp3)
+        else if (slotToDrop == 3)
         {
             pickedUp3 = false;
             slotFull3 = false;
         }
 
+        equipped = false;
+        onFloor = true;
+
         transform.SetParent(null);
         SetVisibility(true);
-
-        // Ustaw pozycjê przedmiotu w pobli¿u gracza/kamery, nad ziemi¹
-        transform.position = player.position + new Vector3(0, 1f, 0); // 1 jednostka nad graczem
 
         rb.isKinematic = false;
         coll.isTrigger = false;
@@ -201,18 +211,17 @@ public class ItemPickUpManager : MonoBehaviour
         BoxCollider boxCollider = coll.GetComponent<BoxCollider>();
         boxCollider.enabled = true;
 
-        // Zerowanie prêdkoœci
+        // Zerujemy prêdkoœæ
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        // Dodanie si³y rzutu
-        rb.AddForce(mainCamera.forward * dropForwardForce + mainCamera.up * dropUpwardForce, ForceMode.Impulse);
+        // Ustaw pozycjê przed graczem
+        Vector3 dropPosition = player.position + mainCamera.forward * 2f;
+        dropPosition.y = Mathf.Max(dropPosition.y, player.position.y + 0.5f); // Minimalna wysokoœæ
+        transform.position = dropPosition;
 
-        // Dodanie losowego momentu obrotowego
-        float random = Random.Range(-1f, 1f);
-        rb.AddTorque(new Vector3(random, random, random) * 10, ForceMode.Impulse);
+        
     }
-
 
     private void UpdateVisibility()
     {
