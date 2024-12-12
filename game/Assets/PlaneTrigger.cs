@@ -3,33 +3,30 @@ using UnityEngine;
 public class PlaneTrigger : MonoBehaviour
 {
     public DoorInteraction door; // Odniesienie do skryptu DoorInteraction
-    public GameObject plane1; // Pierwszy Plane
-    public GameObject plane2; // Drugi Plane
-
-    public bool puzzleSolved;
-    private bool plane1Activated = false;
-    private bool plane2Activated = false;
+    public bool planeActivated = false; // Flaga wskazuj¹ca, czy dany Plane jest aktywowany
+    public GameObject plane; // Zwi¹zane z obiektem Plane (mo¿e byæ potrzebne w przysz³oœci)
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            if (gameObject == plane1)
+            // Ustawiamy plane jako aktywowany, gdy gracz wchodzi w trigger
+            if (!planeActivated)
             {
-                plane1Activated = true;
-                Debug.Log("Plane 1 aktywowany.");
-            }
-            else if (gameObject == plane2)
-            {
-                plane2Activated = true;
-                Debug.Log("Plane 2 aktywowany.");
+                planeActivated = true;
+                Debug.Log($"Plane {gameObject.name} aktywowany.");
+                door.CheckPuzzleSolved(); // Sprawdzamy, czy oba triggery zosta³y aktywowane
             }
         }
-        // Sprawdzenie, czy oba Plane zosta³y aktywowane
-        if (plane1Activated && plane2Activated)
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
-            puzzleSolved = true;
-            Debug.LogWarning("Oba Plane aktywowane. Drzwi odblokowane!");
+            // Nie resetujemy stanu planeActivated po wyjœciu gracza
+            Debug.Log($"Plane {gameObject.name} nie dezaktywowany.");
+            door.CheckPuzzleSolved(); // Sprawdzamy ponownie stan obu triggerów
         }
     }
 }
